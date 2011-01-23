@@ -151,14 +151,14 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
     $choices['1'] = get_string('autosubscribeyes');
     $choices['0'] = get_string('autosubscribeno');
     $mform->addElement('select', 'autosubscribe', get_string('autosubscribe'), $choices);
-    $mform->setDefault('autosubscribe', 1);
+    $mform->setDefault('autosubscribe', 0);  // Nearly nobody likes to be autosubscribed
 
     if (!empty($CFG->forum_trackreadposts)) {
         $choices = array();
         $choices['0'] = get_string('trackforumsno');
         $choices['1'] = get_string('trackforumsyes');
         $mform->addElement('select', 'trackforums', get_string('trackforums'), $choices);
-        $mform->setDefault('trackforums', 0);
+        $mform->setDefault('trackforums', 1);  // Why not?
     }
 
     $editors = editors_get_enabled();
@@ -181,7 +181,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
         $choices['0'] = get_string('ajaxno');
         $choices['1'] = get_string('ajaxyes');
         $mform->addElement('select', 'ajax', get_string('ajaxuse'), $choices);
-        $mform->setDefault('ajax', 0);
+        $mform->setDefault('ajax', 1); // Everybody loves ajax
     }
 
     $choices = array();
