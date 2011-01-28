@@ -1466,7 +1466,7 @@ function message_history_link($userid1, $userid2, $return=false, $keywords='', $
 function message_search_users($courseid, $searchtext, $sort='', $exceptions='') {
     global $CFG, $USER, $DB;
 
-    $fullname = $DB->sql_fullname();
+    $fullname = fullname_sql();
 
     if (!empty($exceptions)) {
         $except = ' AND u.id NOT IN ('. $exceptions .') ';

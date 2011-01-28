@@ -11,13 +11,14 @@ function add_selection_all($ufiltering) {
 
     list($sqlwhere, $params) = $ufiltering->get_sql_filter("id<>:exguest AND deleted <> 1", array('exguest'=>$CFG->siteguest));
 
-    $rs = $DB->get_recordset_select('user', $sqlwhere, $params, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
-    foreach ($rs as $user) {
-        if (!isset($SESSION->bulk_users[$user->id])) {
-            $SESSION->bulk_users[$user->id] = $user->id;
+    if ($rs = $DB->get_recordset_select('user', $sqlwhere, $params, 'fullname', 'id,'.fullname_sql().' AS fullname')) {
+        foreach ($rs as $user) {
+            if (!isset($SESSION->bulk_users[$user->id])) {
+                $SESSION->bulk_users[$user->id] = $user->id;
+            }
         }
+        $rs->close();
     }
-    $rs->close();
 }
 
 function get_selection_data($ufiltering) {
@@ -31,7 +32,7 @@ function get_selection_data($ufiltering) {
     $scount = count($SESSION->bulk_users);
 
     $userlist = array('acount'=>$acount, 'scount'=>$scount, 'ausers'=>false, 'susers'=>false, 'total'=>$total);
-    $userlist['ausers'] = $DB->get_records_select_menu('user', $sqlwhere, $params, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname', 0, MAX_BULK_USERS);
+    $userlist['ausers'] = $DB->get_records_select_menu('user', $sqlwhere, $params, 'fullname', 'id,'.fullname_sql().' AS fullname', 0, MAX_BULK_USERS);
 
     if ($scount) {
         if ($scount < MAX_BULK_USERS) {
@@ -40,7 +41,7 @@ function get_selection_data($ufiltering) {
             $bulkusers = array_slice($SESSION->bulk_users, 0, MAX_BULK_USERS, true);
             $in = implode(',', $bulkusers);
         }
-        $userlist['susers'] = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
+        $userlist['susers'] = $DB->get_records_select_menu('user', "id IN ($in)", null, 'fullname', 'id,'.fullname_sql().' AS fullname');
     }
 
     return $userlist;

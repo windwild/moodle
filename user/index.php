@@ -417,7 +417,7 @@
     $totalcount = $DB->count_records_sql("SELECT COUNT(u.id) $from $where", $params);
 
     if (!empty($search)) {
-        $fullname = $DB->sql_fullname('u.firstname','u.lastname');
+        $fullname = fullname_sql('u.');
         $wheres[] = "(". $DB->sql_like($fullname, ':search1', false, false) .
                     " OR ". $DB->sql_like('email', ':search2', false, false) .
                     " OR ". $DB->sql_like('idnumber', ':search3', false, false) .") ";

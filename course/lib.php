@@ -373,7 +373,7 @@ function print_log($course, $user=0, $date=0, $order="l.time ASC", $page=0, $per
         }
         if ($ld && is_numeric($log->info)) {
             // ugly hack to make sure fullname is shown correctly
-            if ($ld->mtable == 'user' && $ld->field == $DB->sql_concat('firstname', "' '" , 'lastname')) {
+            if ($ld->mtable == 'user' && $ld->field == fullname_sql()) {
                 $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
             } else {
                 $log->info = $DB->get_field($ld->mtable, $ld->field, array('id'=>$log->info));
@@ -486,7 +486,7 @@ function print_mnet_log($hostid, $course, $user=0, $date=0, $order="l.time ASC",
         }
         if (0 && $ld && !empty($log->info)) {
             // ugly hack to make sure fullname is shown correctly
-            if (($ld->mtable == 'user') and ($ld->field == $DB->sql_concat('firstname', "' '" , 'lastname'))) {
+            if (($ld->mtable == 'user') and ($ld->field == fullname_sql())) {
                 $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
             } else {
                 $log->info = $DB->get_field($ld->mtable, $ld->field, array('id'=>$log->info));
@@ -580,7 +580,7 @@ function print_log_csv($course, $user, $date, $order='l.time DESC', $modname,
         }
         if ($ld && !empty($log->info)) {
             // ugly hack to make sure fullname is shown correctly
-            if (($ld->mtable == 'user') and ($ld->field ==  $DB->sql_concat('firstname', "' '" , 'lastname'))) {
+            if (($ld->mtable == 'user') and ($ld->field ==  fullname_sql())) {
                 $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
             } else {
                 $log->info = $DB->get_field($ld->mtable, $ld->field, array('id'=>$log->info));
@@ -678,7 +678,7 @@ function print_log_xls($course, $user, $date, $order='l.time DESC', $modname,
         }
         if ($ld && !empty($log->info)) {
             // ugly hack to make sure fullname is shown correctly
-            if (($ld->mtable == 'user') and ($ld->field == $DB->sql_concat('firstname', "' '" , 'lastname'))) {
+            if (($ld->mtable == 'user') and ($ld->field == fullname_sql())) {
                 $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
             } else {
                 $log->info = $DB->get_field($ld->mtable, $ld->field, array('id'=>$log->info));
@@ -789,7 +789,7 @@ function print_log_ods($course, $user, $date, $order='l.time DESC', $modname,
         }
         if ($ld && !empty($log->info)) {
             // ugly hack to make sure fullname is shown correctly
-            if (($ld->mtable == 'user') and ($ld->field == $DB->sql_concat('firstname', "' '" , 'lastname'))) {
+            if (($ld->mtable == 'user') and ($ld->field == fullname_sql())) {
                 $log->info = fullname($DB->get_record($ld->mtable, array('id'=>$log->info)), true);
             } else {
                 $log->info = $DB->get_field($ld->mtable, $ld->field, array('id'=>$log->info));

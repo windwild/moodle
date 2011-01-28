@@ -280,7 +280,7 @@ class course_enrolment_manager {
         $params = array('guestid' => $CFG->siteguest);
         if (!empty($search)) {
             $conditions = array(
-                $DB->sql_concat('u.firstname', "' '", 'u.lastname'),
+                fullname_sql('u.'),
                 'u.email'
             );
             if ($searchanywhere) {

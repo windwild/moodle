@@ -40,7 +40,7 @@ if ($confirm and confirm_sesskey()) {
 
 } else {
     list($in, $params) = $DB->get_in_or_equal($SESSION->bulk_users);
-    $userlist = $DB->get_records_select_menu('user', "id $in", $params, 'fullname', 'id,'.$DB->sql_fullname().' AS fullname');
+    $userlist = $DB->get_records_select_menu('user', "id $in", $params, 'fullname', 'id,'.fullname_sql().' AS fullname');
     $usernames = implode(', ', $userlist);
     echo $OUTPUT->heading(get_string('confirmation', 'admin'));
     $formcontinue = new single_button(new moodle_url('user_bulk_confirm.php', array('confirm' => 1)), get_string('yes'));

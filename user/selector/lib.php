@@ -423,7 +423,7 @@ abstract class user_selector_base {
         // If we have a $search string, put a field LIKE '$search%' condition on each field.
         if ($search) {
             $conditions = array(
-                $DB->sql_fullname($u . 'firstname', $u . 'lastname'),
+                fullname_sql($u),
                 $conditions[] = $u . 'lastname'
             );
             foreach ($this->extrafields as $field) {
