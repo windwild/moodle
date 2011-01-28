@@ -3127,6 +3127,38 @@ function firstname_first() {
 }
 
 /**
+ * Returns the proper SQL (for the dbms in use) to concatenate firstname and lastname
+ *
+ * The order of firstname and lastname depends on system settings or language.
+ *
+ * @global object
+ * @param string $prefix prefix of firstname and lastname. Must include '.' when necessary.
+ * @return string
+ */
+function fullname_sql($prefix='') {
+    global $DB;
+
+    $firstname = $prefix . 'firstname';
+    $lastname = $prefix . 'lastname';
+
+    $nameordercheck = new stdClass();
+    $nameordercheck->firstname = 'a';
+    $nameordercheck->lastname  = 'b';
+    $ordered_fullname = fullname($nameordercheck);
+
+    switch ($ordered_fullname) {
+        case 'b a':
+            return $DB->sql_concat($lastname, "' '", $firstname);
+        case 'ba': // zh-cn and zh-tw use this style fullname
+            return $DB->sql_concat($lastname, $firstname);
+        case 'ab':
+            return $DB->sql_concat($firstname, $lastname);
+        default:
+            return $DB->sql_concat($firstname, "' '", $lastname);
+    }
+}
+
+/**
  * Returns whether a given authentication plugin exists.
  *
  * @global object

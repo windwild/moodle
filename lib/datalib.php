@@ -108,7 +108,7 @@ function get_admins() {
 function search_users($courseid, $groupid, $searchtext, $sort='', array $exceptions=null) {
     global $DB;
 
-    $fullname  = $DB->sql_fullname('u.firstname', 'u.lastname');
+    $fullname  = fullname_sql('u.');
 
     if (!empty($exceptions)) {
         list($exceptions, $params) = $DB->get_in_or_equal($exceptions, SQL_PARAMS_NAMED, 'ex', false);
@@ -192,7 +192,7 @@ function get_users($get=true, $search='', $confirmed=false, array $exceptions=nu
                 'load so much data into memory.', DEBUG_DEVELOPER);
     }
 
-    $fullname  = $DB->sql_fullname();
+    $fullname  = fullname_sql();
 
     $select = " id <> :guestid AND deleted = 0";
     $params = array('guestid'=>$CFG->siteguest);
@@ -256,7 +256,7 @@ function get_users_listing($sort='lastaccess', $dir='ASC', $page=0, $recordsperp
                            $search='', $firstinitial='', $lastinitial='', $extraselect='', array $extraparams=null) {
     global $DB;
 
-    $fullname  = $DB->sql_fullname();
+    $fullname  = fullname_sql();
 
     $select = "deleted <> 1";
     $params = array();
