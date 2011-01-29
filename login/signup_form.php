@@ -59,10 +59,7 @@ class login_signup_form extends moodleform {
         $mform->setType('email2', PARAM_NOTAGS);
         $mform->addRule('email2', get_string('missingemail'), 'required', null, 'server');
 
-        $nameordercheck = new stdClass();
-        $nameordercheck->firstname = 'a';
-        $nameordercheck->lastname  = 'b';
-        if (fullname($nameordercheck) == 'b a' ) {  // See MDL-4325
+        if (!firstname_first()) {  // See MDL-4325
             $mform->addElement('text', 'lastname',  get_string('lastname'),  'maxlength="100" size="30"');
             $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
         } else {

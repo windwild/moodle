@@ -3114,6 +3114,19 @@ function fullname($user, $override=false) {
 }
 
 /**
+ * Whether the firstname is before lastname in the system settings and language.
+ *
+ * @return boolean Whether the firstname is before lastname
+ */
+function firstname_first() {
+    $nameordercheck = new stdClass();
+    $nameordercheck->firstname = 'a';
+    $nameordercheck->lastname  = 'b';
+    $ordered_fullname = fullname($nameordercheck);
+    return $ordered_fullname == 'a b' || $ordered_fullname == 'ab';
+}
+
+/**
  * Returns whether a given authentication plugin exists.
  *
  * @global object

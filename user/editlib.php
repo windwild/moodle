@@ -87,10 +87,7 @@ function useredit_shared_definition(&$mform, $editoroptions = null) {
 
     $strrequired = get_string('required');
 
-    $nameordercheck = new stdClass();
-    $nameordercheck->firstname = 'a';
-    $nameordercheck->lastname  = 'b';
-    if (fullname($nameordercheck) == 'b a' ) {  // See MDL-4325
+    if (!firstname_first()) {  // See MDL-4325
         $mform->addElement('text', 'lastname',  get_string('lastname'),  'maxlength="100" size="30"');
         $mform->addElement('text', 'firstname', get_string('firstname'), 'maxlength="100" size="30"');
     } else {
