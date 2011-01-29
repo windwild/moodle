@@ -468,7 +468,7 @@ class flexible_table {
         }
 
         $ilast = optional_param($this->request[TABLE_VAR_ILAST], null, PARAM_RAW);
-        if (!is_null($ilast) && ($ilast ==='' || strpos(get_string('alphabet', 'langconfig'), $ilast) !== false)) {
+        if (!is_null($ilast)) {
             $this->sess->i_last = $ilast;
         }
 
@@ -829,6 +829,7 @@ class flexible_table {
      * @param string $urlvar URL parameter name for this initial.
      */
     protected function print_one_initials_bar($alpha, $current, $class, $title, $urlvar) {
+
         echo html_writer::start_tag('div', array('class' => 'initialbar ' . $class)) .
                 $title . ' : ';
         if ($current) {
@@ -837,11 +838,18 @@ class flexible_table {
             echo html_writer::tag('strong', get_string('all'));
         }
 
-        foreach ($alpha as $letter) {
-            if ($letter === $current) {
-                echo html_writer::tag('strong', $letter);
+        $prev = '';
+        foreach ($alpha as $i => $surname) {
+            list($letter, $hanzi) = $surname;
+            if ($letter != $prev) {
+                $prev = $letter;
+                echo '&nbsp;&nbsp; '.html_writer::tag('em', $prev);
+            }
+
+            if ($hanzi === $current) {
+                echo html_writer::tag('strong', $hanzi);
             } else {
-                echo html_writer::link($this->baseurl->out(false, array($urlvar => $letter)), $letter);
+                echo html_writer::link($this->baseurl->out(false, array($urlvar => $hanzi)), $hanzi);
             }
         }
 
@@ -855,16 +863,107 @@ class flexible_table {
         if ((!empty($this->sess->i_last) || !empty($this->sess->i_first) ||$this->use_initials)
                     && isset($this->columns['fullname'])) {
 
-            $alpha  = explode(',', get_string('alphabet', 'langconfig'));
-
-            // Bar of first initials
-            if (!empty($this->sess->i_first)) {
-                $ifirst = $this->sess->i_first;
-            } else {
-                $ifirst = '';
-            }
-            $this->print_one_initials_bar($alpha, $ifirst, 'firstinitial',
-                    get_string('firstname'), $this->request[TABLE_VAR_IFIRST]);
+            $alpha_pinyin = array(
+                    array('B', '白'),
+                    array('C', '蔡'),
+                    array('C', '曹'),
+                    array('C', '陈'),
+                    array('C', '程'),
+                    array('C', '崔'),
+                    array('D', '戴'),
+                    array('D', '邓'),
+                    array('D', '丁'),
+                    array('D', '董'),
+                    array('D', '杜'),
+                    array('D', '段'),
+                    array('F', '范'),
+                    array('F', '方'),
+                    array('F', '冯'),
+                    array('F', '傅'),
+                    array('G', '高'),
+                    array('G', '龚'),
+                    array('G', '顾'),
+                    array('G', '郭'),
+                    array('H', '韩'),
+                    array('H', '郝'),
+                    array('H', '何'),
+                    array('H', '贺'),
+                    array('H', '侯'),
+                    array('H', '胡'),
+                    array('H', '黄'),
+                    array('J', '贾'),
+                    array('J', '姜'),
+                    array('J', '江'),
+                    array('J', '蒋'),
+                    array('J', '金'),
+                    array('K', '孔'),
+                    array('L', '雷'),
+                    array('L', '黎'),
+                    array('L', '李'),
+                    array('L', '梁'),
+                    array('L', '廖'),
+                    array('L', '林'),
+                    array('L', '刘'),
+                    array('L', '龙'),
+                    array('L', '卢'),
+                    array('L', '陆'),
+                    array('L', '罗'),
+                    array('L', '吕'),
+                    array('M', '马'),
+                    array('M', '毛'),
+                    array('M', '孟'),
+                    array('M', '莫'),
+                    array('P', '潘'),
+                    array('P', '彭'),
+                    array('Q', '钱'),
+                    array('Q', '秦'),
+                    array('Q', '覃'),
+                    array('Q', '邱'),
+                    array('R', '任'),
+                    array('S', '邵'),
+                    array('S', '沈'),
+                    array('S', '石'),
+                    array('S', '史'),
+                    array('S', '宋'),
+                    array('S', '苏'),
+                    array('S', '孙'),
+                    array('T', '谭'),
+                    array('T', '汤'),
+                    array('T', '唐'),
+                    array('T', '陶'),
+                    array('T', '田'),
+                    array('W', '万'),
+                    array('W', '汪'),
+                    array('W', '王'),
+                    array('W', '韦'),
+                    array('W', '魏'),
+                    array('W', '吴'),
+                    array('W', '武'),
+                    array('X', '夏'),
+                    array('X', '向'),
+                    array('X', '肖'),
+                    array('X', '谢'),
+                    array('X', '熊'),
+                    array('X', '徐'),
+                    array('X', '许'),
+                    array('X', '薛'),
+                    array('Y', '严'),
+                    array('Y', '闫'),
+                    array('Y', '杨'),
+                    array('Y', '姚'),
+                    array('Y', '叶'),
+                    array('Y', '尹'),
+                    array('Y', '于'),
+                    array('Y', '余'),
+                    array('Y', '袁'),
+                    array('Z', '曾'),
+                    array('Z', '张'),
+                    array('Z', '赵'),
+                    array('Z', '郑'),
+                    array('Z', '钟'),
+                    array('Z', '周'),
+                    array('Z', '朱'),
+                    array('Z', '邹'));
 
             // Bar of last initials
             if (!empty($this->sess->i_last)) {
@@ -872,7 +971,7 @@ class flexible_table {
             } else {
                 $ilast = '';
             }
-            $this->print_one_initials_bar($alpha, $ilast, 'lastinitial',
+            $this->print_one_initials_bar($alpha_pinyin, $ilast, 'lastinitial',
                     get_string('lastname'), $this->request[TABLE_VAR_ILAST]);
         }
     }
