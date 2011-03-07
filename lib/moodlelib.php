@@ -3066,6 +3066,15 @@ function fullname($user, $override=false) {
         $CFG->fullnamedisplay = $SESSION->fullnamedisplay;
     }
 
+    /**
+     * If firstname and lastname are the same in database and the string is not a single character,
+     * only display the firstname string to avoid repeating.
+     * For more, visit https://github.com/hit-moodle/moodle/issues#issue/1
+     */
+    if ($user->firstname == $user->lastname and mb_strlen($user->firstname, 'UTF8') > 1) {
+        return $user->firstname;
+    }
+
     if (!isset($CFG->fullnamedisplay) or $CFG->fullnamedisplay === 'firstname lastname') {
         return $user->firstname .' '. $user->lastname;
 
