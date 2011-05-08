@@ -850,6 +850,13 @@ class auth_plugin_ldap extends auth_plugin_base {
                 }
 
                 $id = $DB->insert_record('user', $user);
+
+                /// Add into cohort
+                if (!empty($user->institution))
+                    hit_cohort_add_member($user->institution, $id);
+                if (!empty($user->department))
+                    hit_cohort_add_member($user->department, $id);
+
                 echo "\t"; print_string('auth_dbinsertuser', 'auth_db', array('name'=>$user->username, 'id'=>$id)); echo "\n";
                 if (!empty($this->config->forcechangepassword)) {
                     set_user_preference('auth_forcepasswordchange', 1, $id);
@@ -917,6 +924,12 @@ class auth_plugin_ldap extends auth_plugin_base {
 
                 if (!empty($this->config->{'field_updatelocal_' . $key})) {
                     if ($user->{$key} != $value) { // only update if it's changed
+                        if ($key == 'institution' || $key == 'department') {
+                            /// Change cohort the user belongs to 
+                            hit_cohort_remove_member($user->{$key}, $userid);
+                            hit_cohort_add_member($value, $userid);
+                        }
+
                         $DB->set_field('user', $key, $value, array('id'=>$userid));
                     }
                 }
@@ -2022,3 +2035,50 @@ class auth_plugin_ldap extends auth_plugin_base {
     }
 
 } // End of the class
+
+/**
+ * Add cohort member. Create cohort if necessary
+ * @param  string $cohortname
+ * @param  int $userid
+ * @return void
+ */
+function hit_cohort_add_member($cohortname, $userid) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/cohort/lib.php');
+
+    $cohorts = $DB->get_records('cohort', array('name' => $cohortname));
+
+    if (!$cohorts) {
+        /// Add new cohort
+        $cohort = new stdClass();
+        $cohort->name = $cohortname;
+        $cohort->contextid = get_context_instance(CONTEXT_SYSTEM)->id;
+        $cohort->id = cohort_add_cohort($cohort);
+        $cohorts = array();
+        $cohorts[] = $cohort;
+    }
+
+    foreach ($cohorts as $cohort) {
+        if (!$DB->record_exists('cohort_members', array('userid' => $userid, 'cohortid' => $cohort->id))) {
+            /// Don't add member more than once
+            cohort_add_member($cohort->id, $userid);
+        }
+    }
+}
+
+/**
+ * Remove cohort member
+ * @param  string $cohortname
+ * @param  int $userid
+ * @return void
+ */
+function hit_cohort_remove_member($cohortname, $userid) {
+    global $DB, $CFG;
+    require_once($CFG->dirroot.'/cohort/lib.php');
+
+    $cohorts = $DB->get_records('cohort', array('name' => $cohortname));
+
+    foreach ($cohorts as $cohort) {
+        cohort_remove_member($cohort->id, $userid);
+    }
+}
