@@ -3318,6 +3318,11 @@ function update_user_record($username) {
                 // stand in until LDAP is giving a value for this field.
                 if (!(empty($value) && $lockval === 'unlockedifempty')) {
                     if ((string)$oldinfo->$key !== (string)$value) {
+                        if ($key == 'institution' || $key == 'department') {
+                            /// Change cohort the user belongs to 
+                            hit_cohort_remove_member((string)$oldinfo->{$key}, $oldinfo->id);
+                            hit_cohort_add_member((string)$value, $oldinfo->id);
+                        }
                         $newuser[$key] = (string)$value;
                     }
                 }
