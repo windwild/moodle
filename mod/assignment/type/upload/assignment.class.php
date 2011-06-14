@@ -1086,7 +1086,7 @@ class assignment_upload extends assignment_base {
     /**
      * creates a zip of all assignment submissions and sends a zip to the browser
      */
-    public function download_submissions() {
+    public function download_submissions($include_feedback = false, $include_subdir = false) {
         global $CFG,$DB;
         require_once($CFG->libdir.'/filelib.php');
         $submissions = $this->get_submissions('','');
@@ -1110,12 +1110,20 @@ class assignment_upload extends assignment_base {
                 $a_assignid = $submission->assignment; //get name of this assignment for use in the file names.
                 $a_user = $DB->get_record("user", array("id"=>$a_userid),'id,username,firstname,lastname'); //get user firstname/lastname
 
+                if ($include_feedback and $feedbackfile = $this->feedback_file($a_user, $include_subdir)) {
+                    $filesforzipping[$feedbackfile->name] = array($feedbackfile->content);
+                }
+
                 $files = $fs->get_area_files($this->context->id, 'mod_assignment', 'submission', $submission->id, "timemodified", false);
                 foreach ($files as $file) {
                     //get files new name.
                     $fileext = strstr($file->get_filename(), '.');
                     $fileoriginal = str_replace($fileext, '', $file->get_filename());
-                    $fileforzipname =  clean_filename(fullname($a_user) . "_" . $fileoriginal."_".$a_userid.$fileext);
+                    if ($include_subdir) {
+                        $fileforzipname =  clean_filename(fullname($a_user)."_".$a_userid) . "/" . clean_filename($fileoriginal.$fileext);
+                    } else {
+                        $fileforzipname =  clean_filename(fullname($a_user) . "_" . $fileoriginal."_".$a_userid.$fileext);
+                    }
                     //save file name to array for zipping.
                     $filesforzipping[$fileforzipname] = $file;
                 }

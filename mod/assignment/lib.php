@@ -1477,9 +1477,15 @@ class assignment_base {
                     }
                     $currentposition++;
                 }
-                if ($hassubmission && ($this->assignment->assignmenttype=='upload' || $this->assignment->assignmenttype=='online' || $this->assignment->assignmenttype=='uploadsingle')) { //TODO: this is an ugly hack, where is the plugin spirit? (skodak)
+                if ($hassubmission && method_exists('assignment_'.$this->assignment->assignmenttype, 'download_submissions')) {
                     echo html_writer::start_tag('div', array('class' => 'mod-assignment-download-link'));
-                    echo html_writer::link(new moodle_url('/mod/assignment/submissions.php', array('id' => $this->cm->id, 'download' => 'zip')), get_string('downloadall', 'assignment'));
+                    echo html_writer::start_tag('form', array('method'=>'post'));
+                    echo html_writer::checkbox('feedback', '1', true, get_string('feedback', 'assignment'));
+                    echo html_writer::checkbox('subdir', '1', true, get_string('subfolder', 'assignment'));
+                    echo html_writer::empty_tag('input', array('class'=>'download_submit', 'type'=>'submit', 'name'=>'download', 'value'=>get_string('downloadall', 'assignment')));
+                    echo html_writer::empty_tag('input', array('name'=>'download', 'style'=>'display:none', 'value'=>'zip'));
+                    echo html_writer::empty_tag('input', array('name'=>'id', 'style'=>'display:none', 'value'=>$this->cm->id));
+                    echo html_writer::end_tag('form');
                     echo html_writer::end_tag('div');
                 }
                 $table->print_html();  /// Print the whole table
@@ -2209,6 +2215,69 @@ class assignment_base {
         return true;
     }
 
+    /**
+     * return the name and content of feedback file to download
+     *
+     * @param object $user whose feedback file
+     * @param bool $subdir whether put the feedback file into sub-directory
+     * @return object
+     */
+    function feedback_file($user, $subdir = false) {
+        global $CFG, $DB, $OUTPUT;
+        require_once("$CFG->libdir/gradelib.php");
+
+        $grading_info = grade_get_grades($this->course->id, 'mod', 'assignment', $this->assignment->id, $user->id);
+        $item = $grading_info->items[0];
+        $grade = $item->grades[$user->id];
+
+        if ($grade->grade === false or $grade->grade === null) { // error or ungraded
+            return false;
+        }
+
+        $graded_date = $grade->dategraded;
+        $graded_by   = $grade->usermodified;
+
+    /// We need the teacher info
+        if (!$teacher = $DB->get_record('user', array('id'=>$graded_by))) {
+            return false;
+        }
+
+    /// Print the feedback
+        $content = '<html><body>';
+        $content .= '<head><meta http-equiv="Content-Type" content="text/html; charset=utf-8" /></head>';
+        $content .= $OUTPUT->heading(get_string('feedbackfromteacher', 'assignment', fullname($teacher)));
+
+        $content .= '<table cellspacing="0" class="feedback">';
+
+        $content .= '<tr>';
+        $content .= '<td>';
+        $content .= '<div>'.userdate($graded_date).'</div>';
+        $content .= '</div>';
+        $content .= '</td>';
+        $content .= '</tr>';
+
+        $content .= '<tr>';
+        $content .= '<td>';
+        $content .= '<div>';
+        $content .= get_string("grade").': '.$grade->str_long_grade;
+        $content .= '</div>';
+
+        $content .= '<div>';
+        $content .= $grade->str_feedback;
+        $content .= '</div>';
+        $content .= '</tr>';
+        $content .= '</table>';
+        $content .= '</body></html>';
+
+        $file->content = $content;
+        if ($subdir) {
+            $file->name = clean_filename(fullname($user)."_".$user->id)."/feedback.html";
+        } else {
+            $file->name = clean_filename(fullname($user)."_".$user->id."_feedback.html");
+        }
+
+        return $file;
+    }
 } ////// End of the assignment_base class
 
 

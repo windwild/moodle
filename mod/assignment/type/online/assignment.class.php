@@ -385,7 +385,7 @@ class assignment_online extends assignment_base {
     /**
      * creates a zip of all assignment submissions and sends a zip to the browser
      */
-    public function download_submissions() {
+    public function download_submissions($include_feedback = false, $include_subdir = false) {
         global $CFG, $DB;
 
         raise_memory_limit(MEMORY_EXTRA);
@@ -414,9 +414,17 @@ class assignment_online extends assignment_base {
             if ((groups_is_member($groupid,$a_userid)or !$groupmode or !$groupid)) {
                 $a_assignid = $submission->assignment; //get name of this assignment for use in the file names.
                 $a_user = $DB->get_record("user", array("id"=>$a_userid),'id,username,firstname,lastname'); //get user firstname/lastname
+
+                if ($include_feedback and $feedbackfile = $this->feedback_file($a_user, $include_subdir)) {
+                    $filesforzipping[$feedbackfile->name] = array($feedbackfile->content);
+                }
+
                 $submissioncontent = "<html><body>". format_text($submission->data1, $submission->data2). "</body></html>";      //fetched from database
                 //get file name.html
                 $fileforzipname =  clean_filename(fullname($a_user) . "_" .$a_userid.$filextn);
+                if ($include_subdir) {
+                    $fileforzipname =  clean_filename(fullname($a_user)."_".$a_userid) . "/" . $fileforzipname;
+                }
                 $filesforzipping[$fileforzipname] = array($submissioncontent);
             }
         }      //end of foreach

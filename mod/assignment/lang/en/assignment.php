@@ -175,6 +175,7 @@ $string['saveallfeedback'] = 'Save all my feedback';
 $string['selectblog'] = 'Select which blog entry you wish to submit';
 $string['sendformarking'] = 'Send for marking';
 $string['showrecentsubmissions'] = 'Show recent submissions';
+$string['subfolder'] = 'Subfolder';
 $string['submission'] = 'Submission';
 $string['submissiondraft'] = 'Submission draft';
 $string['submissionfeedback'] = 'Submission feedback';
