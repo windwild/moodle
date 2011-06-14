@@ -38,7 +38,7 @@ class login_signup_form extends moodleform {
         $mform->addElement('header', '', get_string('createuserandpass'), '');
 
 
-        $mform->addElement('text', 'username', get_string('username'), 'maxlength="100" size="12"');
+        $mform->addElement('text', 'username', get_string('username').'(必须以.local结尾)', 'maxlength="100" size="12"');
         $mform->setType('username', PARAM_NOTAGS);
         $mform->addRule('username', get_string('missingusername'), 'required', null, 'server');
 
@@ -122,7 +122,9 @@ class login_signup_form extends moodleform {
 
         $authplugin = get_auth_plugin($CFG->registerauth);
 
-        if ($DB->record_exists('user', array('username'=>$data['username'], 'mnethostid'=>$CFG->mnet_localhost_id))) {
+        if (substr($data['username'], -6) != '.local') {
+            $errors['username'] = '用户名必须以“.local”结尾';
+        } else if ($DB->record_exists('user', array('username'=>$data['username'], 'mnethostid'=>$CFG->mnet_localhost_id))) {
             $errors['username'] = get_string('usernameexists');
         } else {
             //check allowed characters
