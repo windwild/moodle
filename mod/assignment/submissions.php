@@ -52,7 +52,9 @@ $assignmentclass = 'assignment_'.$assignment->assignmenttype;
 $assignmentinstance = new $assignmentclass($cm->id, $assignment, $cm, $course);
 
 if($download == "zip") {
-    $assignmentinstance->download_submissions();
+    $feedback = optional_param('feedback', FALSE, PARAM_BOOL);  // Include feedback ?
+    $subdir = optional_param('subdir', FALSE, PARAM_BOOL);  // One sub-directory per person ?
+    $assignmentinstance->download_submissions($feedback, $subdir);
 } else {
     $assignmentinstance->submissions($mode);   // Display or process the submissions
 }
