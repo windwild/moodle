@@ -25,3 +25,9 @@ CVS
 /.project
 /.buildpath
 /.cache
+/mod/hotquestion/
+/plagiarism/crot/
+/plagiarism/moss/
+/local/onlinejudge
+/mod/assignment/type/onlinejudge
+/blocks/userguide
