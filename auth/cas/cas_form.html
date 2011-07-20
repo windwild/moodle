@@ -1,11 +1,35 @@
+<script type="text/javascript">
+    // Got from http://stackoverflow.com/questions/133925/javascript-post-request-like-a-form-submit
+    function post_to_url(path, params, method) {
+        method = method || "post"; // Set method to post by default, if not specified.
+
+        // The rest of this code assumes you are not using a library.
+        // It can be made less wordy if you use one.
+        var form = document.createElement("form");
+        form.setAttribute("method", method);
+        form.setAttribute("action", path);
+
+        for(var key in params) {
+            var hiddenField = document.createElement("input");
+            hiddenField.setAttribute("type", "hidden");
+            hiddenField.setAttribute("name", key);
+            hiddenField.setAttribute("value", params[key]);
+
+            form.appendChild(hiddenField);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+</script>
 <div class="loginbox clearfix">
 <div class="loginpanel">
-<div>
-<a href="<?php echo $CFG->wwwroot.'/login/index.php?authCAS=CAS';?>"><?php print_string('accesCAS', 'auth_cas');?></a>
-</div>
-<br/>
-<div>
-<a href="<?php echo $CFG->wwwroot.'/login/index.php?authCAS=NOCAS';?>"><?php print_string('accesNOCAS', 'auth_cas');?></a>
-</div>
+    <p><strong>哈工大用户使用 HITID 登录，方能享受更多便捷功能</strong></p>
+    <p>请选择登录方式：</p>
+    <ul>
+        <li><a href="<?php echo $CFG->wwwroot.'/login/index.php?authCAS=CAS';?>">哈工大用户（HITID登录）</a> - HITID登录由网络中心管理，本站无权操作。如遇问题，请询86413483，或webmaster[at]hit.edu.cn</li>
+        <li><a href="<?php echo $CFG->wwwroot.'/login/index.php?authCAS=NOCAS';?>"><?php print_string('accesNOCAS', 'auth_cas');?></a> - 如遇登录问题，请<a href="forgot_password.php">访问此处</a>。</li>
+        <li><a href="<?php echo $CFG->wwwroot.'/login/index.php';?>" onClick="post_to_url('index.php', {'username' : 'guest', 'password' : 'guest'}); return false">随便看看</a></li>
+    </ul>
 </div>
 </div>
