@@ -96,6 +96,14 @@ switch ($action) {
         redirect(new moodle_url('/group/group.php', array('courseid'=>$courseid)));
         break;
 
+    case 'createdepgroups':
+        redirect(new moodle_url('/group/createdepgroup.php', array('courseid'=>$courseid, 'groupby'=>'department')));
+        break;
+
+    case 'createinstgroups':
+        redirect(new moodle_url('/group/createdepgroup.php', array('courseid'=>$courseid, 'groupby'=>'institution')));
+        break;
+
     case 'showautocreategroupsform':
         redirect(new moodle_url('/group/autogroup.php', array('courseid'=>$courseid)));
         break;
@@ -210,6 +218,9 @@ echo '<p><input type="submit" '. $deletegroup_disabled . ' name="act_deletegroup
 
 echo '<p><input type="submit" name="act_showcreateorphangroupform" id="showcreateorphangroupform" value="'
         . get_string('creategroup', 'group') . '" /></p>'."\n";
+
+echo '<p><input type="submit" name="act_createdepgroups" id="createdepgroups" value="按班级自动创建小组" /></p>'."\n";
+echo '<p><input type="submit" name="act_createinstgroups" id="createinstgroups" value="按院系/部门自动创建小组" /></p>'."\n";
 
 echo '<p><input type="submit" name="act_showautocreategroupsform" id="showautocreategroupsform" value="'
         . get_string('autocreategroups', 'group') . '" /></p>'."\n";
