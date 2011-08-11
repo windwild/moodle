@@ -997,8 +997,8 @@ function filter_phrases($text, &$link_array, $ignoretagsopen=NULL, $ignoretagscl
 /// Invalid prefixes and suffixes for the fullmatch searches
 /// Every "word" character, but the underscore, is a invalid suffix or prefix.
 /// (nice to use this because it includes national characters (accents...) as word characters.
-    $filterinvalidprefixes = '([^\W_])';
-    $filterinvalidsuffixes = '([^\W_])';
+    $filterinvalidprefixes = '([a-zA-Z])';
+    $filterinvalidsuffixes = '([a-zA-Z])';
 
 /// Add the user defined ignore tags to the default list
 /// Unless specified otherwise, we will not replace within <a></a> tags
