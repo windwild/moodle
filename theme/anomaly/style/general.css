@@ -21,8 +21,7 @@ html, body {background-color:#C8C9C7;}
 
 /** General **/
 .generalbox {border: 1px solid #DDDDDD;}
-.generaltable td {border-width:0;}
-.sitetopic {border-width:0;}
+.generaltable td {border-width:0;} .sitetopic {border-width:0;}
 .headingblock {margin-bottom:10px;border-bottom:1px solid #697F55;background-color:#E3E3E3;padding:4px 5px;}
 
 .coursebox {width:100%;margin:10px 0px;border-bottom:1px solid #E3E3E3;overflow:hidden;padding-bottom:10px;}
@@ -79,6 +78,7 @@ html, body {background-color:#C8C9C7;}
 #adminsettings fieldset {border:1px solid #C8C9C7;background-color:#E3E3E3;}
 #adminsettings fieldset .generalbox {margin:1em 0.5em;border-color:#C8C9C7;}
 #adminsettings .form-buttons {margin-left:13em;}
+#page-admin-roles-override .capcurrent {background-color:#FFFFFF;border: 1px solid #CECECE;}
 
 .form-item {width:100%;margin:1em 1em 2em 1em ;}
 .form-item .form-label {width:12.5em;text-align:right;float:left;margin-right:0.5em;}
