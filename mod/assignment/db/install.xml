@@ -13,7 +13,7 @@
         <FIELD NAME="introformat" TYPE="int" LENGTH="4" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="intro" NEXT="assignmenttype"/>
         <FIELD NAME="assignmenttype" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" PREVIOUS="introformat" NEXT="resubmit"/>
         <FIELD NAME="resubmit" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="assignmenttype" NEXT="preventlate"/>
-        <FIELD NAME="preventlate" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="resubmit" NEXT="emailteachers"/>
+        <FIELD NAME="preventlate" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="1" SEQUENCE="false" PREVIOUS="resubmit" NEXT="emailteachers"/>
         <FIELD NAME="emailteachers" TYPE="int" LENGTH="2" NOTNULL="true" UNSIGNED="true" DEFAULT="0" SEQUENCE="false" PREVIOUS="preventlate" NEXT="var1"/>
         <FIELD NAME="var1" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="emailteachers" NEXT="var2"/>
         <FIELD NAME="var2" TYPE="int" LENGTH="10" NOTNULL="false" UNSIGNED="false" DEFAULT="0" SEQUENCE="false" PREVIOUS="var1" NEXT="var3"/>
