@@ -993,15 +993,6 @@ abstract class moodleform {
         $mform->setType("checkbox_controller$groupid", PARAM_INT);
         $mform->setConstants(array("checkbox_controller$groupid" => $new_select_value));
 
-        // Locate all checkboxes for this group and set their value, IF the optional param was given
-        if (!is_null($select_value)) {
-            foreach ($this->_form->_elements as $element) {
-                if ($element->getAttribute('class') == "checkboxgroup$groupid") {
-                    $mform->setConstants(array($element->getAttribute('name') => $select_value));
-                }
-            }
-        }
-
         $checkbox_controller_name = 'nosubmit_checkbox_controller' . $groupid;
         $mform->registerNoSubmitButton($checkbox_controller_name);
 
@@ -1010,7 +1001,7 @@ abstract class moodleform {
         if (!defined('HTML_QUICKFORM_CHECKBOXCONTROLLER_EXISTS')) {
             $js .= <<<EOS
 function html_quickform_toggle_checkboxes(group) {
-    var checkboxes = getElementsByClassName(document, 'input', 'checkboxgroup' + group);
+    var checkboxes = document.getElementsByClassName('checkboxgroup' + group);
     var newvalue = false;
     var global = eval('html_quickform_checkboxgroup' + group + ';');
     if (global == 1) {
@@ -1574,6 +1565,10 @@ class MoodleQuickForm extends HTML_QuickForm_DHTMLRulesTableless {
             }
         }
 
+        if (is_array($this->_constantValues)) {
+            $unfiltered = HTML_QuickForm::arrayMerge($unfiltered, $this->_constantValues);
+        }
+
         return $unfiltered;
     }
     /**
@@ -1729,6 +1724,12 @@ var skipClientValidation = false;
 
 function qf_errorHandler(element, _qfMsg) {
   div = element.parentNode;
+
+  if ((div == undefined) || (element.name == undefined)) {
+    //no checking can be done for undefined elements so let server handle it.
+    return true;
+  }
+
   if (_qfMsg != \'\') {
     var errorSpan = document.getElementById(\'id_error_\'+element.name);
     if (!errorSpan) {
@@ -1778,16 +1779,25 @@ function qf_errorHandler(element, _qfMsg) {
                 $elementName);
             $js .= '
 function validate_' . $this->_formName . '_' . $escapedElementName . '(element) {
+  if (undefined == element) {
+     //required element was not found, then let form be submitted without client side validation
+     return true;
+  }
   var value = \'\';
   var errFlag = new Array();
   var _qfGroups = {};
   var _qfMsg = \'\';
   var frm = element.parentNode;
-  while (frm && frm.nodeName.toUpperCase() != "FORM") {
-    frm = frm.parentNode;
+  if ((undefined != element.name) && (frm != undefined)) {
+      while (frm && frm.nodeName.toUpperCase() != "FORM") {
+        frm = frm.parentNode;
+      }
+    ' . join("\n", $jsArr) . '
+      return qf_errorHandler(element, _qfMsg);
+  } else {
+    //element name should be defined else error msg will not be displayed.
+    return true;
   }
-' . join("\n", $jsArr) . '
-  return qf_errorHandler(element, _qfMsg);
 }
 ';
             $validateJS .= '
