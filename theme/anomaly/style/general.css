@@ -154,6 +154,7 @@ html, body {background-color:#C8C9C7;}
 .forumpost .content .commands {font-size:0.9em;clear:both;padding-top:0.5em;text-align:right;}
 .forumpost .content .link {font-size:0.9em;}
 .forumpost .content .footer {font-size:0.9em;padding-top:0.5em;text-align:right;}
+.forumpost.unread .content {border:2px solid #0046C7;} /** inside border of unread posts in nested format in */
 
 /** Calendar **/
 .block.block_calendar_month td,
