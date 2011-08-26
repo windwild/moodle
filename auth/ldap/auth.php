@@ -800,7 +800,6 @@ $admin";
                     }
 
                     echo "\t"; echo "Converted user $user->username ($user->id)"; echo "\n";
-                    die;
                 }
             } else {
                 echo 'No user entries to convert';
