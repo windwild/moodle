@@ -746,6 +746,67 @@ class auth_plugin_ldap extends auth_plugin_base {
             unset($revive_users);
         }
 
+/// Convert graduated students to local user (append .hit to username)
+        // Find users in DB that aren't in ldap -- to be converted!
+        // this is still not as scalable (but how often do we mass delete?)
+        if ($this->config->removeuser == AUTH_REMOVEUSER_KEEP) {
+            $sql = 'SELECT u.*
+                      FROM {user} u
+                      LEFT JOIN {tmp_extuser} e ON (u.username = e.username AND u.mnethostid = e.mnethostid)
+                     WHERE u.auth = ?
+                           AND u.deleted = 0
+                           AND e.username IS NULL';
+            $convert_users = $DB->get_records_sql($sql, array($this->authtype));
+
+            if (!empty($convert_users)) {
+                echo 'Will convert '.count($convert_users)." users.\n";
+
+                foreach ($convert_users as $user) {
+                    $updateuser = new stdClass();
+                    $updateuser->id = $user->id;
+                    $updateuser->auth = 'manual';
+                    $updateuser->username = $user->username.'.hit';
+                    // set 'secret' string
+                    $updateuser->secret = random_string(15);
+                    $DB->update_record('user', $updateuser);
+
+                    // send reset password confirmation
+                    $site = get_site();
+                    $supportuser = generate_email_supportuser();
+
+                    $sitename  = format_string($site->shortname);
+                    $link      = $CFG->httpswwwroot .'/login/forgot_password.php?p='. $updateuser->secret .'&s='. urlencode($updateuser->username);
+                    $admin     = generate_email_signoff();
+
+                    $message = fullname($user).
+"，您好
+
+可能因为毕业、离校或离职，您的HITID——{$user->username}——已经被信息中心禁用。尽管如此，{$sitename}仍欢迎您常回来看看。
+
+现在，我们已经将您的账号转为本地账号，可以用“其他用户”方式登录。
+
+新用户名是：{$updateuser->username}
+
+请到这里设定新密码：$link
+
+感谢您的一贯支持！祝身体健康，前程锦绣。
+
+$admin";
+                    $subject = "{$sitename}已将您的HITID转为本地账号";
+
+                    //directly email rather than using the messaging system to ensure its not routed to a popup or jabber
+                    if (!empty($user->email)) {
+                        email_to_user($user, $supportuser, $subject, $message);
+                    }
+
+                    echo "\t"; echo "Converted user $user->username ($user->id)"; echo "\n";
+                }
+            } else {
+                echo 'No user entries to convert';
+            }
+            unset($convert_users); // free mem!
+        }
+
 
 /// User Updates - time-consuming (optional)
         if ($do_updates) {
