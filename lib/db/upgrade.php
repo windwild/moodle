@@ -6639,11 +6639,20 @@ FROM
     // Moodle v2.1.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2011070101.04) {
+        // Remove category_sortorder index that was supposed to be removed long time ago
+        $table = new xmldb_table('course');
+        $index = new xmldb_index('category_sortorder', XMLDB_INDEX_UNIQUE, array('category', 'sortorder'));
+
+        if ($dbman->index_exists($table, $index)) {
+            $dbman->drop_index($table, $index);
+        }
+        upgrade_main_savepoint(true, 2011070101.04);
+    }
+
+
     return true;
 }
 
-//TODO: Cleanup before the 2.0 release - we do not want to drag along these dev machine fixes forever
-// 1/ drop block_pinned_old table here and in install.xml
-// 2/ drop block_instance_old table here and in install.xml
 
 //TODO: AFTER 2.0 remove the column user->emailstop and the user preference "message_showmessagewindow"
