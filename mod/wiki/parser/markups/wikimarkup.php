@@ -18,7 +18,7 @@ abstract class wiki_markup_parser extends generic_parser {
     protected $wiki_page_id;
 
     //sections
-    protected $section_edit_text = "[edit]";
+    protected $section_edit_text = "<编辑>";
     protected $repeated_sections;
 
     protected $section_editing = true;
