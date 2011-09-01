@@ -796,8 +796,8 @@ $admin";
                     $subject = "{$sitename}已将您的HITID转为本地账号";
 
                     //directly email rather than using the messaging system to ensure its not routed to a popup or jabber
-                    if (!email_to_user($user, $supportuser, $subject, $message)) {
-                        print_error('cannotmailconfirm');
+                    if (!empty($user->email)) {
+                        email_to_user($user, $supportuser, $subject, $message);
                     }
 
                     echo "\t"; echo "Converted user $user->username ($user->id)"; echo "\n";
