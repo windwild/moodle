@@ -100,8 +100,8 @@ foreach ($users as $user) {
  * Is user a teacher?
  */
 function is_teacher($user) {
-    // 目前只看用户名位数及是否全是数字就行
-    return strlen($user->username) == 8 and is_numeric($user->username);
+    // address has been synced with employeeType
+    return $user->address;
 }
 
 /**
