@@ -56,7 +56,7 @@ Example:
     die;
 }
 
-$users = $DB->get_records('user', array('auth' => 'cas'), '', 'id, username, firstname, lastname, department, institution');
+$users = $DB->get_records('user', array('auth' => 'cas', 'deleted' => '0'), '', 'id, username, firstname, lastname, department, institution');
 
 foreach ($users as $user) {
     $future_cohorts = array();
