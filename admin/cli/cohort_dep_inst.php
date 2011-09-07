@@ -56,30 +56,52 @@ Example:
     die;
 }
 
-$users = $DB->get_records('user', array('auth' => 'cas'));
+$users = $DB->get_records('user', array('auth' => 'cas'), '', 'id, username, firstname, lastname, department, institution');
 
 foreach ($users as $user) {
-    $futurenames = array();
-    if (!empty($user->department)) {
-        $futurenames[] = $user->department;
-    }
+    $future_cohorts = array();
     if (!empty($user->institution)) {
-        $futurenames[] = $user->institution;
+        $cohort = $user->institution;
+        if (is_teacher($user)) {
+            $cohort .= '(教师)';
+        } else {
+            $cohort .= '(学生)';
+        }
+        $future_cohorts[] = $cohort;
     }
-    $currentnames = hit_get_member_cohorts($user->id);
+    if (!empty($user->department)) {
+        $cohort = $user->department;
+        $future_cohorts[] = $cohort;
+    }
 
-    // remove
-    foreach ($currentnames as $currentname) {
-        if (!in_array($currentname, $futurenames)) {
-            hit_cohort_remove_member($currentname, $user->id);
-            echo 'Removed '.fullname($user)."($user->username) from $currentname.\n";
+    if (is_teacher($user)) {
+        $future_cohorts[] = '全校教师';
+    } else {
+        $future_cohorts[] = '全校学生';
+    }
+
+    $current_cohorts = hit_get_member_cohorts($user->id);
+
+    // remove user from old cohort if he changes dep or inst
+    foreach ($current_cohorts as $current_cohort) {
+        if (!in_array($current_cohort, $future_cohorts)) {
+            hit_cohort_remove_member($current_cohort, $user->id);
+            echo 'Removed '.fullname($user)."($user->username) from $current_cohort.\n";
         }
     }
 
     // add
-    foreach ($futurenames as $futurename) {
+    foreach ($future_cohorts as $futurename) {
         hit_cohort_add_member($futurename, $user->id);
     }
+}
+
+/**
+ * Is user a teacher?
+ */
+function is_teacher($user) {
+    // 目前只看用户名位数及是否全是数字就行
+    return strlen($user->username) == 8 and is_numeric($user->username);
 }
 
 /**
