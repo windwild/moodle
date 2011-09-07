@@ -852,7 +852,8 @@ $admin";
 
                 foreach ($users as $user) {
                     echo "\t"; print_string('auth_dbupdatinguser', 'auth_db', array('name'=>$user->username, 'id'=>$user->id));
-                    if (!$this->update_user_record($user->username, $updatekeys)) {
+                    // skip users with bad data
+                    if (in_array($user->username, array('11005a0211')) or !$this->update_user_record($user->username, $updatekeys)) {
                         echo ' - '.get_string('skipped');
                     }
                     echo "\n";
