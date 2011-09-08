@@ -7,7 +7,7 @@ easily in your editor (eg vim or emacs), you can generate one:
 Exuberant ctags (default on Linux, can be compiled on other platforms):
 ----------------------------------------------------------------------
 
-ctags -R --languages=php --exclude="CVS" --php-kinds=f \
+ctags -R --languages=php --exclude="CVS" --php-kinds=cdf \
 --regex-PHP='/abstract class ([^ ]*)/\1/c/' \
 --regex-PHP='/interface ([^ ]*)/\1/c/' \
 --regex-PHP='/(public |static |abstract |protected |private )+function ([^ (]*)/\2/f/'
