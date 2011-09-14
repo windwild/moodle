@@ -237,6 +237,11 @@ echo '</div>';
 
 echo '<table class="list" summary="">';
 
+// Show idnumber
+if ($user->idnumber && $user->auth == 'cas' && has_capability('moodle/user:viewalldetails', $coursecontext)) {
+    print_row(get_string("idnumber").":", "$user->idnumber");
+}
+
 //checks were performed above that ensure that if we've got to here either the user
 //is viewing their own profile ($USER->id == $user->id) or $user is enrolled in the course
 if ($currentuser
