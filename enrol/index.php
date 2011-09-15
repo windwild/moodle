@@ -90,6 +90,10 @@ foreach ($forms as $form) {
 }
 
 if (!$forms) {
+    //-- Show course information to unenrolled users/guests
+    require_once("$CFG->dirroot/course/lib.php");
+    print_course($course);
+    //-----
     if (isguestuser()) {
         notice(get_string('noguestaccess', 'enrol'), get_login_url());
     } else {
