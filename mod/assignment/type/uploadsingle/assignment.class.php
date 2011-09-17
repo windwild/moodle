@@ -388,7 +388,7 @@ class assignment_uploadsingle extends assignment_base {
                     $fileext = strstr($file->get_filename(), '.');
                     $fileoriginal = str_replace($fileext, '', $file->get_filename());
                     if ($include_subdir) {
-                        $fileforzipname =  clean_filename(fullname($a_user)."_".$a_userid) . "/" . clean_filename($fileoriginal.$fileext);
+                        $fileforzipname =  clean_filename(fullname($a_user)."_".$a_userid) . $file->get_filepath() . clean_filename($fileoriginal.$fileext);
                     } else {
                         $fileforzipname =  clean_filename(fullname($a_user) . "_" . $fileoriginal."_".$a_userid.$fileext);
                     }
