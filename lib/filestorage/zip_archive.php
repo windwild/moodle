@@ -58,7 +58,20 @@ class zip_archive extends file_archive {
      * @param string $encoding archive local paths encoding
      * @return bool success
      */
-    public function open($archivepathname, $mode=file_archive::CREATE, $encoding='utf-8') {
+    public function open($archivepathname, $mode=file_archive::CREATE, $encoding='') {
+        global $CFG;
+
+        if (empty($encoding)) {
+            $localewincharset = get_string('localewincharset', 'langconfig');
+            // if clients is Windows, use localewincharset as default charset
+            // otherwise, use utf-8
+            if(!empty($localewincharset) and check_browser_operating_system('Windows')) {
+                $encoding = $localewincharset;
+            } else {
+                $encoding = 'utf-8';
+            }
+        }
+
         $this->close();
 
         $this->usedmem = 0;
