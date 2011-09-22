@@ -1239,13 +1239,14 @@ class assignment_base {
             }
         }
 
-        $tablecolumns = array('picture', 'fullname', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status', 'finalgrade');
+        $tablecolumns = array('picture', 'fullname', 'idnumber', 'grade', 'submissioncomment', 'timemodified', 'timemarked', 'status', 'finalgrade');
         if ($uses_outcomes) {
             $tablecolumns[] = 'outcome'; // no sorting based on outcomes column
         }
 
         $tableheaders = array('',
                               get_string('fullnameuser'),
+                              get_string('idnumber'),
                               get_string('grade'),
                               get_string('comment', 'assignment'),
                               get_string('lastmodified').' ('.get_string('submission', 'assignment').')',
@@ -1314,7 +1315,7 @@ class assignment_base {
 
         $ufields = user_picture::fields('u');
         if (!empty($users)) {
-            $select = "SELECT $ufields,
+            $select = "SELECT $ufields, auth, address, idnumber,
                               s.id AS submissionid, s.grade, s.submissioncomment,
                               s.timemodified, s.timemarked ";
             $sql = 'FROM {user} u '.
@@ -1473,7 +1474,10 @@ class assignment_base {
                         }
 
                         $userlink = '<a href="' . $CFG->wwwroot . '/user/view.php?id=' . $auser->id . '&amp;course=' . $course->id . '">' . fullname($auser, has_capability('moodle/site:viewfullnames', $this->context)) . '</a>';
-                        $row = array($picture, $userlink, $grade, $comment, $studentmodified, $teachermodified, $status, $finalgrade);
+
+                        /// Show students' idnumber if they are cas users
+                        $idnumber = ($auser->auth == 'cas' && $auser->address == 0) ? $auser->idnumber : '-';
+                        $row = array($picture, $userlink, $idnumber, $grade, $comment, $studentmodified, $teachermodified, $status, $finalgrade);
                         if ($uses_outcomes) {
                             $row[] = $outcomes;
                         }
