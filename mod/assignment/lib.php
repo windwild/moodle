@@ -1487,13 +1487,7 @@ class assignment_base {
                 }
                 if ($hassubmission && method_exists('assignment_'.$this->assignment->assignmenttype, 'download_submissions')) {
                     echo html_writer::start_tag('div', array('class' => 'mod-assignment-download-link'));
-                    echo html_writer::start_tag('form', array('method'=>'post'));
-                    echo html_writer::checkbox('feedback', '1', true, get_string('feedback', 'assignment'));
-                    echo html_writer::checkbox('subdir', '1', true, get_string('subfolder', 'assignment'));
-                    echo html_writer::empty_tag('input', array('class'=>'download_submit', 'type'=>'submit', 'name'=>'download', 'value'=>get_string('downloadall', 'assignment')));
-                    echo html_writer::empty_tag('input', array('name'=>'download', 'style'=>'display:none', 'value'=>'zip'));
-                    echo html_writer::empty_tag('input', array('name'=>'id', 'style'=>'display:none', 'value'=>$this->cm->id));
-                    echo html_writer::end_tag('form');
+                    echo html_writer::link(new moodle_url('/mod/assignment/submissions.php', array('id' => $this->cm->id, 'download' => 'zip', 'feedback' => 1, 'subdir' => 1)), get_string('downloadall', 'assignment'));
                     echo html_writer::end_tag('div');
                 }
                 $table->print_html();  /// Print the whole table
