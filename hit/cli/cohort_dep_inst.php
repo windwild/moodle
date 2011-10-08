@@ -33,8 +33,8 @@ require_once($CFG->libdir.'/clilib.php');      // cli only functions
 require_once($CFG->dirroot.'/cohort/lib.php');
 
 // now get cli options
-list($options, $unrecognized) = cli_get_params(array('help'=>false),
-                                               array('h'=>'help'));
+list($options, $unrecognized) = cli_get_params(array('help'=>false, 'unput'=>false, 'delete'=>false),
+                                               array('h'=>'help', 'u'=>'unput', 'd'=>'delete'));
 
 if ($unrecognized) {
     $unrecognized = implode("\n  ", $unrecognized);
@@ -47,6 +47,8 @@ if ($options['help']) {
 
 Options:
 -h, --help            Print out this help
+-u, --unput           Romove user from cohorts which they are not belong to
+-d, --delete          Delete empty cohorts
 
 Example:
 \$sudo -u www-data /usr/bin/php admin/cli/cohort_dep_inst.php
@@ -82,17 +84,31 @@ foreach ($users as $user) {
 
     $current_cohorts = hit_get_member_cohorts($user->id);
 
-    // remove user from old cohort if he changes dep or inst
-    foreach ($current_cohorts as $current_cohort) {
-        if (!in_array($current_cohort, $future_cohorts)) {
-            hit_cohort_remove_member($current_cohort, $user->id);
-            echo 'Removed '.fullname($user)."($user->username) from $current_cohort.\n";
+    if ($options['unput']) {
+        // remove user from old cohort if he changes dep or inst
+        foreach ($current_cohorts as $current_cohort) {
+            if (!in_array($current_cohort, $future_cohorts)) {
+                hit_cohort_remove_member($current_cohort, $user->id);
+                echo 'Removed '.fullname($user)."($user->username) from $current_cohort.\n";
+            }
         }
     }
 
     // add
     foreach ($future_cohorts as $futurename) {
         hit_cohort_add_member($futurename, $user->id);
+    }
+}
+
+if ($options['delete']) {
+    // remove empty cohorts
+    $cohorts = $DB->get_records('cohort', array('contextid'=>get_system_context()->id));
+
+    foreach ($cohorts as $cohort) {
+        if (! $DB->count_records('cohort_members', array('cohortid'=>$cohort->id))) {
+            cohort_delete_cohort($cohort);
+            echo "Deleted cohort $cohort->name\n";
+        }
     }
 }
 
