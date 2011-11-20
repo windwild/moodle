@@ -475,6 +475,10 @@ html, body {
     text-align: right;
 }
 
+.forumpost .unread .content { /** inside border of unread posts in nested format in */
+    border:2px solid #0046C7;
+}
+
 /** Calendar **/
 .block.block_calendar_month td,
 .block.block_calendar_month th {
