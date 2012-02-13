@@ -48,4 +48,5 @@ $logs = array(
     array('module'=>'message', 'action'=>'unblock contact', 'mtable'=>'user', 'field'=>fullname_sql()),
     array('module'=>'group', 'action'=>'view', 'mtable'=>'groups', 'field'=>'name'),
     array('module'=>'tag', 'action'=>'update', 'mtable'=>'tag', 'field'=>'name'),
+    array('module'=>'tag', 'action'=>'flag', 'mtable'=>'tag', 'field'=>'name'),
 );
