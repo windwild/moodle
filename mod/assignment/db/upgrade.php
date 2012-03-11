@@ -157,6 +157,36 @@ function xmldb_assignment_upgrade($oldversion) {
     // Moodle v2.1.0 release upgrade line
     // Put any upgrade step following this
 
+    if ($oldversion < 2012032200) {
+
+    /// Count files actually uploaded and update assignment_submissions.numfiles
+        ini_set('max_execution_time', 600); // Slow in big sites
+        $fs = get_file_storage();
+        $submissions = $DB->get_records_sql("SELECT s.id , cm.id AS cmid
+                                             FROM {assignment_submissions} s
+                                             INNER JOIN {course_modules} cm
+                                                ON s.assignment = cm.instance
+                                             WHERE cm.module =
+                                                   (SELECT id
+                                                    FROM {modules}
+                                                    WHERE name = 'assignment')
+                                            ");
+        $pbar = new progress_bar('assignmentupgradenumfiles', 500, true);
+        $count = count($submissions);
+        $i = 0;
+        foreach ($submissions as $sub) {
+            $i++;
+            if ($context = get_context_instance(CONTEXT_MODULE, $sub->cmid)) {
+                $sub->numfiles = count($fs->get_area_files($context->id, 'mod_assignment', 'submission', $sub->id, 'sortorder', false));
+                $DB->update_record('assignment_submissions', $sub);
+            }
+            $pbar->update($i, $count, "Counting files of submissions ($i/$count)");
+        }
+
+    /// assignment savepoint reached
+        upgrade_mod_savepoint(true, 2012032200, 'assignment');
+    }
+
     return true;
 }
 
